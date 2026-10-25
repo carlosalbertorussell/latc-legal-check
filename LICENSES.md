@@ -1,6 +1,6 @@
 # Licences
 
-The Paper C material sits under `paperC/` on the `paperc-*` branches. Three licences apply, by origin.
+The Paper C material sits under `paperC/` on the `paperc-*` branches. Four licences apply, by origin.
 
 | What | Where (on the `paperc-*` branches) | Licence | Text |
 |---|---|---|---|
