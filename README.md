@@ -31,6 +31,7 @@ The work is kept on branches, so every stage can be cited by commit.
 | `paperc-figures` | Figures 1–3, the script that draws them, and their data |
 
 Each branch documents how to reproduce its stage in the README files under `paperC/`. The harness uses the [`latc_check`](https://github.com/carlosalbertorussell/latc-check) package at commit `c6d2802`, unmodified.
+[REPRODUCE.md](REPRODUCE.md) gathers in one guide the software, the commands in order, the expected outputs and the source of every table and figure, and describes the release archive `paperc-data-v1`.
 
 ## Licences
 
