@@ -551,7 +551,7 @@ of the run and fix branches, each checked against its git blob in `SOURCES.csv`)
 | 3 controls (`controls.csv`) | | CTRL-HASH, CTRL-GT, CTRL-EXCL and CTRL-PLANT pass on every sample. CTRL-H3 passes where there are no REJECTED rows and fails, as PROTOCOL.md section 7(c) expects, on FR-AF-1, FR-APL-1, FR-APL-2, FR-APL-4, US-121-1 and US-121-2. CTRL-FULL is recorded without a pass criterion on legal samples and passes on CTRL-NUR |
 | 3 `paperC.harness.determinism` | `determinism.json` | `"identical": true` (CTRL-DET), with `run_a` and `run_b` hashes equal to the committed outputs |
 | 4 `recompute.py` | `runs.csv`, `controls.csv`, `summary.md` (and `plant.csv` on verify-fr) | the committed verifier outputs, byte for byte |
-| 4 `compare.py` | `compare.txt` or stdout | 0 differing cells against the runner. On verify-fr2 and verify-fix the verdict line reads DIFFERENT only because the columns `sample`/`sample_id` and `n`/`size` are named differently; `compare_renamed.py` maps them and prints IDENTICAL |
+| 4 `compare.py` | `compare.txt` or stdout | 0 differing cells against the runner (on `paperc-verify-nz` the committed NZ-AS and NZ-SPS files say "comparison pending"; see section 7). On verify-fr2 and verify-fix the verdict line reads DIFFERENT only because the columns `sample`/`sample_id` and `n`/`size` are named differently; `compare_renamed.py` maps them and prints IDENTICAL |
 | 4 spot checks | CSV and text files under `paperC/verify/spotcheck/` or `paperC/verify/<ID>/` | every drawn row agrees with the ground truth (`VERIFY-*.md`); on verify-fr2 only the `seconds` fields of `summary.json` change |
 | 4 `m6_slp_fix.py` | stdout | `rows first 256, second 256, compared 256`, `tally: {'agree': 256}` (`paperC/verify-fix/NZ-SLP/m6_second_conversion.txt`) |
 | 5 analysis scripts | `paperC/analysis/out/*.json`, `REPORT-M2-M6.md` | the committed files, unchanged |
@@ -618,7 +618,7 @@ any `paperc-*` branch.
 | 3 | `paperC.harness.run` on CTRL-NUR at `0269952`, into `paperC/results/CTRL-NUR` (3) | `paperc-harness` | exit 0, 1,263 runs, no control fails, 23 s; all four outputs byte-identical to the committed ones, `manifest.json` included |
 | 4 | the same at the branch head `89795da`, written outside the repository | `paperc-harness` | `runs.csv`, `controls.csv`, `summary.md` identical; `manifest.json` differs only in `harness_commit` and the output paths (this is why section 3 says to run at the recorded commit) |
 | 5 | `paperC.harness.determinism` on CTRL-NUR (3) | `paperc-harness` | `CTRL-DET PASS: outputs are byte-identical`, 45 s |
-| 6 | `paperC.harness.run` at the recorded harness commit (3) | run and fix branches | all four outputs byte-identical for FR-PF (5 s), FR-AF-2 (630 s), FR-APL-1 (1 s), FR-APL-5 (16 s), US-121-1 (0.6 s), corrected US-121-2 (2.2 s), corrected NZ-SLP (1.2 s), NZ-AS (369 s), NZ-AS-1964 (6 s) |
+| 6 | `paperC.harness.run` at the recorded harness commit (3) | run and fix branches | all four outputs byte-identical, `manifest.json` included, for all 16 legal and supplementary samples the paper uses: FR-PF (5 s), FR-AF-1 (875 s), FR-AF-2 (630 s), FR-AF-3 (1,021 s), FR-APL-1 (1 s), FR-APL-2 (149 s), FR-APL-3 (9 s), FR-APL-4 (2 s), FR-APL-5 (16 s), US-121-1 (0.6 s), corrected US-121-2 (2.2 s), corrected NZ-SLP (1.2 s), NZ-AS (369 s), NZ-SPS (691 s), NZ-AS-1964 (6 s); four ran at a time |
 | 7 | `run_official_tests.py`; `run_official_tests_apl.py`; `run_official_tests_us121.py` (1a, 1b) | `paperc-catala-family-benefits`, `paperc-data-fr2` | 15/15 scopes (18 assertions); 3/3; 6/6 |
 | 8 | `oracle.py --check-official` and `--enumerate` (2c, 2d, 2e) | `paperc-data-fr` (FR-PF), `paperc-data-fr2` (FR-APL-1, US-121-1), `paperc-data-fr2-fix` (US-121-2) | every official test passes; rewritten files byte-identical (`git status` clean, `sha256sum -c` OK) |
 | 9 | `setup_env.sh` (1c) | `paperc-data-nz-fix` | exit 0; `pip freeze` equals `requirements.lock` line for line |
@@ -628,9 +628,26 @@ any `paperc-*` branch.
 | 13 | `recompute.py` US-121-1; `compare.py`; `spotcheck.py --full` (4) | `paperc-verify-fr2` | outputs byte-identical; 0 of 29,118 shared cells differ (verdict line DIFFERENT for the two column names); `summary.json` differs only in its `seconds` fields (70 s) |
 | 14 | `verify-fix/recompute.py` NZ-SLP; `compare_renamed.py`; `m6_slp_fix.py` (4) | `paperc-data-nz-fix` | outputs byte-identical; 31,650 cells, 0 differ, IDENTICAL; 256/256 rows agree |
 | 15 | `xcheck_us121_2.py read` on the committed `clerk_report.txt` (2e) | `paperc-data-fr2-fix` | the text of `result.txt`: 204 pass, 696 REJECTED, 0 disagreements, negative control reported |
-| 16 | `fetch_sources.sh`; `m2_fr_af.py` (10 s), `m2_fr2.py` (1 s), `m2_nz.py` (3 s), `m6_nz.py` (1 s), `m6_fr2.py` (3 s) (5) | `paperc-analysis` | exit 0; `out/*.json` unchanged |
+| 16 | `fetch_sources.sh`; `m2_fr_af.py` (10 s), `m2_fr2.py` (1 s), `m2_nz.py` (3 s), `m6_nz.py` (1 s), `m6_fr2.py` (3 s), `m6_fr_af.py` (693 s under load), `build_report.py` (5) | `paperc-analysis` | exit 0 for each; `out/*.json` and `REPORT-M2-M6.md` unchanged |
 | 17 | figures venv from `requirements.lock`; `make_figures.py` (6) | `paperc-figures` | `pip freeze` equals the lock; `checks passed: 345/345`, exit 0, 5 s; every PDF, PNG and CSV byte-identical |
 | 18 | harness `run` and verifier `recompute.py` in an unpacked `git archive` of `paperc-data-fr2-fix` (2) | `paperc-data-fr2-fix` | US-121-2 `runs.csv`, `controls.csv`, `summary.md` byte-identical; `manifest.json` records `harness_commit` `unknown`; verifier outputs byte-identical |
+| 19 | Catala install of section 1 (`opam install catala.1.3.0`) | | `catala --version` and `clerk --version` print `1.3.0`; 654 s |
+| 20 | `clerk test` of steps 1a and 1b in catala-examples `2694b17` | | 31/31 and 15/15 (family benefits); 7/7, 3/3, 67/67, 33/33, 18/18 (APL, US); `us_tax_code/tests/ --backend=python` prints NO TESTS WERE RUN, as documented |
+| 21 | `clerk build allocations-familiales`, `clerk build aides-logement -b python`, `clerk build us_tax_code/python/Us_tax_code.py` (1a, 1b) | `paperc-catala-family-benefits`, `paperc-data-fr2` | the 19 generated modules of `catala_family_benefits/generated/` and the 30 of `catala_more/generated/` (all but `__init__.py`) byte-identical to the built ones |
+| 22 | `interpreter_crosscheck.py write … 600`, `clerk test`, `read` (2d) | `paperc-data-fr2` | 3,186 rows, 0 disagreements, the per-table counts of `interpreter_crosscheck_report.txt`; 17 s |
+| 23 | `xcheck_us121_2.py write`, `clerk test`, `read` (2e) | `paperc-data-fr2-fix` | 900 rows: 204 pass, 696 REJECTED at line 376, 0 disagreements, negative control reported |
+| 24 | `spotcheck.py` (50 rows) and `compare.py origin/paperc-run-nz NZ-SLP NZ-AS NZ-SPS` (4) | `paperc-verify-nz` | 50/50 rows agree in each table, 3 s; 0 of 30,384 cells differ for each of the three samples (see the note below) |
 
-Not run here: the `clerk` commands (they need Catala 1.3.0 built with opam), the
-second-conversion rebuilds (step 2g), and the NZ verifier's OpenFisca spot check.
+Note on `paperc-verify-nz`: its committed `NZ-AS/compare.txt` and `NZ-SPS/compare.txt`
+read "comparison pending", and `VERIFY-NZ.md` lists the comparison as pending, because the
+runner's NZ-AS and NZ-SPS results were pushed after the verifier ran (the copies on
+`paperc-data-nz-fix:paperC/verify-fix/` say the same). Rerunning
+`python3.12 paperC/verify/compare.py origin/paperc-run-nz NZ-SLP NZ-AS NZ-SPS` on that
+branch now completes it: 0 of 30,384 cells in common columns differ for NZ-AS and for
+NZ-SPS, CTRL-PLANT 0 of 422 sets differ, 0 of 462 summary rows differ. That result exists
+only in this record until it is committed to a branch.
+
+Not run here: the second-conversion rebuilds (step 2g), CTRL-DET on samples other than
+CTRL-NUR, the harness runs of the uncorrected US-121-2 and NZ-SLP, the NZ verifier's
+`--full` spot check and `citations.py`, `check_yaml_reader.py`, and `oracle.py
+--enumerate` on the large FR-AF, FR-APL-2, NZ-AS and NZ-SPS tables.
