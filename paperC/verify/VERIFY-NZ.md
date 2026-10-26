@@ -24,7 +24,7 @@ a separate Python 3.11 virtualenv for steps 2 and 3).
 | 3. Audit: code citations and declared values | pass | pass | pass |
 | 3. Audit: thresholds and parameters at the fixed period | pass | pass | pass |
 | 3. Audit: legislation references | partial (see 3.3) | partial (see 3.3) | partial (see 3.3) |
-| 4. Compare runs.csv with `origin/paperc-run-nz` | **pass**: 0 of 30,384 cells differ | pending | pending |
+| 4. Compare runs.csv with `origin/paperc-run-nz` | **pass**: 0 of 30,384 cells differ | **pass**: 0 of 30,384 cells differ | **pass**: 0 of 30,384 cells differ |
 
 No disagreement was found between the verifier and the conversion or the runner in any
 number. The findings below are observations on the protocol and the samples; none of
@@ -223,8 +223,9 @@ No disagreement between spec.json and the encoding was found. Observations for t
 
 ## 4. Comparison with the runner (`compare.py`)
 
-`python3.12 paperC/verify/compare.py origin/paperc-run-nz NZ-SLP NZ-AS NZ-SPS`, run at
-`origin/paperc-run-nz` = `09c2392`. Output in `paperC/verify/<ID>/compare.txt`.
+`python3.12 paperC/verify/compare.py origin/paperc-run-nz NZ-SLP NZ-AS NZ-SPS`, first run at
+`origin/paperc-run-nz` = `09c2392` (2026-10-20) and run again at `b835740` (2026-10-26).
+Output in `paperC/verify/<ID>/compare.txt`.
 
 * **NZ-SLP: identical numbers.** 1,266 rows and 25 columns on both sides; the only
   difference is the first header name (`sample` here, `sample_id` in the runner).
@@ -232,8 +233,15 @@ No disagreement between spec.json and the encoding was found. Observations for t
   rows removed, C2 and C1 counts, pass): 0 of 422 differ. Summary statistics (10 metrics ×
   42 cells, plus completion share and Wilson bounds, at the runner's 4 decimals): 0 of 462
   rows differ.
-* **NZ-AS, NZ-SPS: pending.** `origin/paperc-run-nz` holds no `paperC/results/NZ-AS/` or
-  `paperC/results/NZ-SPS/` yet. Re-run the command above once they are pushed.
+* **NZ-AS, NZ-SPS: identical numbers.** Compared on 2026-10-26 with the same command, at
+  `origin/paperc-run-nz` = `b835740`. The comparison was pending until then because the
+  runner pushed its NZ-AS and NZ-SPS results (`b835740`, 2026-10-20 21:31 UTC) after this
+  branch's verification was committed (`6fc8b7e`, 21:21 UTC); at `09c2392` the runner's
+  branch held only NZ-SLP and NZ-AS-1964. For each sample: 1,266 rows and 25 columns on
+  both sides, the same header-name difference as NZ-SLP, 0 of 30,384 cells in common
+  columns differ, CTRL-PLANT 0 of 422 example sets differ, and 0 of 462 summary rows
+  differ. The NZ-SLP output at `b835740` is unchanged from the one at `09c2392`. No file
+  of steps 1 to 3 was changed by this run.
 
 ## Files
 
