@@ -114,7 +114,7 @@ Branch heads at release `paperc-data-v1`:
 | `paperc-run-nz` | `b835740` | harness runs and `REPORT-NZ.md` |
 | `paperc-verify-fr` | `83a0d78` | independent verification, `VERIFY-FR.md` |
 | `paperc-verify-fr2` | `9050c33` | independent verification, `VERIFY-FR2.md` |
-| `paperc-verify-nz` | `6fc8b7e` | independent verification, `VERIFY-NZ.md` |
+| `paperc-verify-nz` | `d93c3c0` | independent verification, `VERIFY-NZ.md` |
 | `paperc-code2-fr` | `c957417` | blinded second conversion, FR-PF and FR-AF |
 | `paperc-code2-fr2` | `9e448d5` | blinded second conversion, FR-APL and US-121 |
 | `paperc-code2-nz` | `723d8e9` | blinded second conversion, NZ |
@@ -608,8 +608,9 @@ grep -A4 '^## Hypothesis indicators' paperC/results/*/summary.md
 
 Commands run on 2026-10-26 in a Claude Code cloud container (Ubuntu, Linux x86_64, 4
 vCPUs, CPython 3.12.3, 3.11 and 3.13.17), each in a clean worktree of the branch named.
-Several commands ran in parallel, so times include contention. Nothing was committed to
-any `paperc-*` branch.
+Several commands ran in parallel, so times include contention. The dry run committed
+nothing to any `paperc-*` branch; the comparison of row 24 was committed afterwards (see
+the note below).
 
 | # | Command (section) | Branch | Result |
 |---|---|---|---|
@@ -638,14 +639,15 @@ any `paperc-*` branch.
 | 23 | `xcheck_us121_2.py write`, `clerk test`, `read` (2e) | `paperc-data-fr2-fix` | 900 rows: 204 pass, 696 REJECTED at line 376, 0 disagreements, negative control reported |
 | 24 | `spotcheck.py` (50 rows) and `compare.py origin/paperc-run-nz NZ-SLP NZ-AS NZ-SPS` (4) | `paperc-verify-nz` | 50/50 rows agree in each table, 3 s; 0 of 30,384 cells differ for each of the three samples (see the note below) |
 
-Note on `paperc-verify-nz`: its committed `NZ-AS/compare.txt` and `NZ-SPS/compare.txt`
-read "comparison pending", and `VERIFY-NZ.md` lists the comparison as pending, because the
-runner's NZ-AS and NZ-SPS results were pushed after the verifier ran (the copies on
-`paperc-data-nz-fix:paperC/verify-fix/` say the same). Rerunning
-`python3.12 paperC/verify/compare.py origin/paperc-run-nz NZ-SLP NZ-AS NZ-SPS` on that
-branch now completes it: 0 of 30,384 cells in common columns differ for NZ-AS and for
-NZ-SPS, CTRL-PLANT 0 of 422 sets differ, 0 of 462 summary rows differ. That result exists
-only in this record until it is committed to a branch.
+Note on `paperc-verify-nz`: until 2026-10-26 its `NZ-AS/compare.txt` and
+`NZ-SPS/compare.txt` read "comparison pending", and `VERIFY-NZ.md` listed the comparison
+as pending, because the runner's NZ-AS and NZ-SPS results were pushed after the verifier
+ran. Rerunning `python3.12 paperC/verify/compare.py origin/paperc-run-nz NZ-SLP NZ-AS NZ-SPS`
+on that branch completes it: 0 of 30,384 cells in common columns differ for NZ-AS and for
+NZ-SPS, CTRL-PLANT 0 of 422 sets differ, 0 of 462 summary rows differ. The two
+`compare.txt` files and `VERIFY-NZ.md` with this result are committed on
+`paperc-verify-nz` at `d93c3c0`. The copies on `paperc-data-nz-fix:paperC/verify-fix/`
+still read "comparison pending"; `paperc-verify-nz` holds the completed record.
 
 Not run here: the second-conversion rebuilds (step 2g), CTRL-DET on samples other than
 CTRL-NUR, the harness runs of the uncorrected US-121-2 and NZ-SLP, the NZ verifier's
